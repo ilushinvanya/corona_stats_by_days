@@ -49,6 +49,12 @@
                         enabled: true,
                         drag: false,
                         mode: 'x',
+                    },
+                    scales: {
+                        yAxes: [{
+
+                            position: 'right',
+                        }]
                     }
                 }
             }
@@ -81,6 +87,13 @@
                     let first_confirmed_date = false;
 
                     this.confirmed.forEach( confirmed_item => {
+
+                        // if ( confirmed_item.Province === confirmed_item.Country || confirmed_item.Province === "" ) {
+                        //
+                        // }else{
+                        //     console.log(confirmed_item.Province)
+                        //     return;
+                        // }
 
                         if ( confirmed_item.Cases === 0 && !first_confirmed_date ) {
                             return;
@@ -133,7 +146,7 @@
             fillDataForChart() {
                 this.$q.loading.hide()
                 this.datacollection = {
-                    labels: this.parsed_data.map(item => $moment(item.date).format("DD MMM")),
+                    labels: this.parsed_data.map(item => $moment(item.date, "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]").format("DD MMM")),
                     datasets: [
                         {
                             label: this.$t("confirmed"),
