@@ -1,4 +1,5 @@
-# Quasar App (corona_stats)
+# Corona statistics by days
+# Статистика распространения вируса на каждый день по странам
 
 A Quasar Framework app
 
