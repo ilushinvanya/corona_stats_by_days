@@ -45,7 +45,8 @@
       v-model="leftDrawerOpen"
       show-if-above
       bordered
-      content-class="bg-grey-1"
+      :width="400"
+      content-class="bg-grey-3"
     >
       <q-list>
         <q-item-label header>
@@ -77,6 +78,14 @@
                 size="10px"
                 @click="sort = 'TotalDeaths'"
                 :icon="sort === 'TotalDeaths' ? 'check' : ''"
+              />
+
+              <q-btn
+                color="secondary"
+                round
+                size="10px"
+                @click="sort = 'TotalDiff'"
+                :icon="sort === 'TotalDiff' ? 'check' : ''"
               />
             </div>
           </q-item-section>
@@ -113,6 +122,13 @@
                 color="red"
                 text-color="white"
                 :label="country.TotalDeaths" />
+
+              <q-badge
+                color="secondary"
+                text-color="white"
+                :label="country.TotalConfirmed - (country.TotalDeaths + country.TotalRecovered)" />
+
+
 
             </div>
           </q-item-section>
@@ -168,14 +184,18 @@
             sorted_countries(){
                 if ( !this.countries.hasOwnProperty("Countries") ) return [];
 
+                if ( this.sort === 'TotalDiff' ){
+                    return this.countries.Countries.sort((a,b) => {
+                        const a_sort = a[this.sort];
+                        const b_sort = b[this.sort];
+                        return b_sort - a_sort;
+                    })
+                }
+
                 return this.countries.Countries.sort((a,b) => {
-                    const a_sort = a[this.sort];
-                    const b_sort = b[this.sort];
-                    if ( this.sort_direction === "asc" ){
-                      return a_sort - b_sort;
-                    }else{
-                      return b_sort - a_sort;
-                    }
+                    const a_sort = a.TotalConfirmed - (a.TotalDeaths + a.TotalRecovered);
+                    const b_sort = b.TotalConfirmed - (b.TotalDeaths + b.TotalRecovered);;
+                    return b_sort - a_sort;
                 })
             }
         },

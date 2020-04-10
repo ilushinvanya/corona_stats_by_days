@@ -1,14 +1,16 @@
 {
   "name": "corona_stats",
   "version": "1.0.0",
-  "description": "A Quasar Framework app",
+  "description": "Corona Statistics app",
   "productName": "Corona Statistics",
   "cordovaId": "org.cordova.quasar.app",
   "capacitorId": "",
   "author": "Ivan <ilushinvanya@gmail.com>",
   "private": true,
   "scripts": {
-    "test": "echo \"No test specified\" && exit 0"
+    "dev": "quasar dev",
+    "build": "quasar build",
+    "pwa": "quasar build -m pwa"
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",

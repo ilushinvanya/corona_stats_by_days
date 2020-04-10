@@ -73,9 +73,9 @@
 
 
                 this.parsed_data = [];
-                const confirmed = await this.$axios.get(`https://api.covid19api.com/total/dayone/country/${this.selected_country}/status/confirmed`)
-                const recovered = await this.$axios.get(`https://api.covid19api.com/total/dayone/country/${this.selected_country}/status/recovered`)
-                const deaths = await this.$axios.get(`https://api.covid19api.com/total/dayone/country/${this.selected_country}/status/deaths`)
+                const confirmed = await this.$axios.get(`https://api.covid19api.com/dayone/country/${this.selected_country}/status/confirmed/live`)
+                const recovered = await this.$axios.get(`https://api.covid19api.com/dayone/country/${this.selected_country}/status/recovered/live`)
+                const deaths = await this.$axios.get(`https://api.covid19api.com/dayone/country/${this.selected_country}/status/deaths/live`)
 
                 Promise.all([confirmed, recovered, deaths]).then(values => {
 
@@ -87,13 +87,10 @@
                     let first_confirmed_date = false;
 
                     this.confirmed.forEach( confirmed_item => {
+                        if (confirmed_item.hasOwnProperty('Province') || confirmed_item.Country === ""){
+                            return false;
+                        }
 
-                        // if ( confirmed_item.Province === confirmed_item.Country || confirmed_item.Province === "" ) {
-                        //
-                        // }else{
-                        //     console.log(confirmed_item.Province)
-                        //     return;
-                        // }
 
                         if ( confirmed_item.Cases === 0 && !first_confirmed_date ) {
                             return;
@@ -104,8 +101,12 @@
 
 
                         // Найти в Вылечившихся и Смертях ту же дату что и заразившихся
-                        const recovered_obj = this.recovered.find( recovered_item => recovered_item.Date == confirmed_item.Date );
-                        const deaths_obj = this.deaths.find( deaths_item => deaths_item.Date == confirmed_item.Date );
+                        const recovered_obj = this.recovered.find( recovered_item => {
+                            return recovered_item.Date === confirmed_item.Date && !recovered_item.hasOwnProperty('Province')
+                        });
+                        const deaths_obj = this.deaths.find( deaths_item => {
+                            return deaths_item.Date == confirmed_item.Date && !deaths_item.hasOwnProperty('Province')
+                        });
 
                         let pushed_obj = {
                             date: confirmed_item.Date,
@@ -135,7 +136,9 @@
                                 recovered_total: obj.recovered,
                                 // deaths_diff: diff_deaths > 0 ? diff_deaths : 0,
                                 deaths_diff: diff_deaths,
-                                deaths_total: obj.deaths
+                                deaths_total: obj.deaths,
+                                diff: diff_confirmed - ( diff_deaths + diff_recovered )
+                                // a.TotalConfirmed - (a.TotalDeaths + a.TotalRecovered)
                             }
                         }
                     })
