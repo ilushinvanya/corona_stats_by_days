@@ -87,7 +87,7 @@
                     let first_confirmed_date = false;
 
                     this.confirmed.forEach( confirmed_item => {
-                        if (confirmed_item.hasOwnProperty('Province') || confirmed_item.Country === ""){
+                        if (confirmed_item.Province.length > 0 || confirmed_item.Country === ""){
                             return false;
                         }
 
@@ -102,10 +102,10 @@
 
                         // Найти в Вылечившихся и Смертях ту же дату что и заразившихся
                         const recovered_obj = this.recovered.find( recovered_item => {
-                            return recovered_item.Date === confirmed_item.Date && !recovered_item.hasOwnProperty('Province')
+                            return recovered_item.Date === confirmed_item.Date && recovered_item.Province.length === 0
                         });
                         const deaths_obj = this.deaths.find( deaths_item => {
-                            return deaths_item.Date == confirmed_item.Date && !deaths_item.hasOwnProperty('Province')
+                            return deaths_item.Date == confirmed_item.Date && deaths_item.Province.length === 0
                         });
 
                         let pushed_obj = {

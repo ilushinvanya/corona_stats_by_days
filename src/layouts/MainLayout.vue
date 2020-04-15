@@ -186,15 +186,15 @@
 
                 if ( this.sort === 'TotalDiff' ){
                     return this.countries.Countries.sort((a,b) => {
-                        const a_sort = a[this.sort];
-                        const b_sort = b[this.sort];
+                        const a_sort = a.TotalConfirmed - (a.TotalDeaths + a.TotalRecovered);
+                        const b_sort = b.TotalConfirmed - (b.TotalDeaths + b.TotalRecovered);
                         return b_sort - a_sort;
                     })
                 }
 
                 return this.countries.Countries.sort((a,b) => {
-                    const a_sort = a.TotalConfirmed - (a.TotalDeaths + a.TotalRecovered);
-                    const b_sort = b.TotalConfirmed - (b.TotalDeaths + b.TotalRecovered);;
+                    const a_sort = a[this.sort];
+                    const b_sort = b[this.sort];
                     return b_sort - a_sort;
                 })
             }
