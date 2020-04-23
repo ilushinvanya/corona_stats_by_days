@@ -10,6 +10,9 @@
       <div class="chart-container" style="position: relative; height:60vh; width:100%">
         <line-chart ref="chart" :chart-data="datacollection" :options="options" />
       </div>
+
+
+
     </div>
   </q-page>
 </template>
@@ -65,6 +68,12 @@
         computed: {
             selected_country(){
                 return this.$store.state.select_country_slug;
+            },
+            rangedData(){
+                return this.parsed_data.filter((item,index) => {
+                    return index > this.range.min && index < this.range.max;
+                })
+
             }
         },
         methods: {
@@ -73,9 +82,9 @@
 
 
                 this.parsed_data = [];
-                const confirmed = await this.$axios.get(`https://api.covid19api.com/dayone/country/${this.selected_country}/status/confirmed/live`)
-                const recovered = await this.$axios.get(`https://api.covid19api.com/dayone/country/${this.selected_country}/status/recovered/live`)
-                const deaths = await this.$axios.get(`https://api.covid19api.com/dayone/country/${this.selected_country}/status/deaths/live`)
+                const confirmed = await this.$axios.get(`https://api.covid19api.com/total/dayone/country/${this.selected_country}/status/confirmed`)
+                const recovered = await this.$axios.get(`https://api.covid19api.com/total/dayone/country/${this.selected_country}/status/recovered`)
+                const deaths = await this.$axios.get(`https://api.covid19api.com/total/dayone/country/${this.selected_country}/status/deaths`)
 
                 Promise.all([confirmed, recovered, deaths]).then(values => {
 
@@ -123,9 +132,9 @@
                         if ( index === 0 ) {
                             return obj;
                         }else{
-                            const diff_confirmed = obj.confirmed - this.parsed_data[index - 1].confirmed;
-                            const diff_recovered = obj.recovered - this.parsed_data[index - 1].recovered;
-                            const diff_deaths = obj.deaths - this.parsed_data[index - 1].deaths;
+                            const diff_confirmed = Math.abs(obj.confirmed - this.parsed_data[index - 1].confirmed);
+                            const diff_recovered = Math.abs(obj.recovered - this.parsed_data[index - 1].recovered);
+                            const diff_deaths = Math.abs(obj.deaths - this.parsed_data[index - 1].deaths);
                             return {
                                 date: obj.date,
                                 // confirmed_diff: diff_confirmed > 0 ? diff_confirmed : 0,
@@ -142,6 +151,11 @@
                             }
                         }
                     })
+
+                    const length = this.parsed_data.length;
+                    const delete_items_count = length - 30;
+                    this.parsed_data.splice(0, delete_items_count);
+
 
                     this.fillDataForChart()
                 });
